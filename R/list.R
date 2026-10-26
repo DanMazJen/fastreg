@@ -59,12 +59,28 @@ list_parquet_datasets <- function() {
 #' @describeIn list_parquet List all Parquet files within a project.
 #' @export
 list_parquet_files <- function() {
-  rawdata_path <- get_project_rawdata_dir()
-  workdata_path <- get_project_workdata_dir()
+  data_paths <- purrr::list_c(
+    list(
+      if (!is.null(getOption("fastreg.project_rawdata_dir"))) {
+        get_project_rawdata_dir()
+      },
+      if (!is.null(getOption("fastreg.project_workdata_dir"))) {
+        get_project_workdata_dir()
+      }
+    )
+  )
+
+  if (length(data_paths) == 0) {
+    stop(
+      "Cannot list parquet files as neither `fastreg.project_rawdata_dir` nor",
+      "`fastreg.project_workdata_dir` is set in options. Please provide at least one.",
+      call. = FALSE
+    )
+  }
 
   fs::dir_ls(
     # Start from root of system.
-    c(rawdata_path, workdata_path),
+    data_paths,
     regexp = ".*/part-.*\\.parquet$",
     recurse = TRUE,
     fail = FALSE,
