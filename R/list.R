@@ -71,10 +71,8 @@ list_parquet_files <- function() {
   )
 
   if (length(data_paths) == 0) {
-    stop(
-      "Cannot list parquet files as neither `fastreg.project_rawdata_dir` nor",
-      "`fastreg.project_workdata_dir` is set in options. Please provide at least one.",
-      call. = FALSE
+    cli::cli_abort(
+      "Cannot list Parquet files as neither {.code fastreg.project_rawdata_dir} nor {.code fastreg.project_workdata_dir} is set in options. Please provide at least one."
     )
   }
 
